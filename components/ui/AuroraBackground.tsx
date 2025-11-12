@@ -1,6 +1,10 @@
+// components/ui/AuroraBackground.tsx
 "use client";
 import { Color, Mesh, Program, Renderer, Triangle } from "ogl";
 import { useEffect, useRef } from "react";
+
+// 1. Impor file CSS kustom Anda (jika ada, sesuaikan path)
+// import "./Aurora.css";
 
 const VERT = `#version 300 es
 in vec2 position;
@@ -69,16 +73,16 @@ struct ColorStop {
   float position;
 };
 
-#define COLOR_RAMP(colors, factor, finalColor) {              \
-  int index = 0;                                            \
-  for (int i = 0; i < 2; i++) {                               \
-     ColorStop currentColor = colors[i];                    \
-     bool isInBetween = currentColor.position <= factor;    \
-     index = int(mix(float(index), float(i), float(isInBetween))); \
-  }                                                         \
-  ColorStop currentColor = colors[index];                   \
-  ColorStop nextColor = colors[index + 1];                  \
-  float range = nextColor.position - currentColor.position; \
+#define COLOR_RAMP(colors, factor, finalColor) {               \
+  int index = 0;                                               \
+  for (int i = 0; i < 2; i++) {                                \
+    ColorStop currentColor = colors[i];                        \
+    bool isInBetween = currentColor.position <= factor;        \
+    index = int(mix(float(index), float(i), float(isInBetween))); \
+  }                                                            \
+  ColorStop currentColor = colors[index];                      \
+  ColorStop nextColor = colors[index + 1];                     \
+  float range = nextColor.position - currentColor.position;    \
   float lerpFactor = (factor - currentColor.position) / range; \
   finalColor = mix(currentColor.color, nextColor.color, lerpFactor); \
 }
@@ -184,7 +188,11 @@ export default function Aurora(props: AuroraProps) {
     const update = (t: number) => {
       animateId = requestAnimationFrame(update);
       const { time = t * 0.01, speed = 1.0 } = propsRef.current;
-      if (program) {
+
+      // ======================================================
+      // --- 💡 INI ADALAH PERBAIKANNYA (Solusi A) ---
+      if (program && mesh) {
+        // ======================================================
         program.uniforms.uTime.value = time * speed * 0.1;
         program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
         program.uniforms.uBlend.value = propsRef.current.blend ?? blend;
@@ -208,7 +216,14 @@ export default function Aurora(props: AuroraProps) {
       }
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [amplitude]);
+  }, []); // Dependensi array sengaja kosong
 
-  return <div ref={ctnDom} className="w-full h-full" />;
+  // 2. Ganti className Tailwind dengan className kustom Anda
+  //    (Sesuaikan 'aurora-container' jika Anda punya CSS sendiri di Aurora.css)
+  return (
+    <div
+      ref={ctnDom}
+      style={{ width: "100%", height: "100%", position: "absolute" }}
+    />
+  );
 }

@@ -1,142 +1,204 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* --- global.css (TEMA KUSTOM BARU - DIPERBAIKI) --- */
 
-@custom-variant dark (&:is(.dark *));
+/* 1. Impor Font Modern (Opsional, tapi disarankan) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
-/* === PALET BARU - LIGHT MODE === */
+/* 2. Variabel Tema Utama (Root) */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.98 0.004 263.31);
-  /* Off-white */
-  --foreground: oklch(0.09 0.007 263.31);
-  /* Dark blue-black */
-  --card: oklch(1 0 0);
-  /* White */
-  --card-foreground: oklch(0.09 0.007 263.31);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.09 0.007 263.31);
-  --primary: oklch(0.45 0.23 263.31);
-  /* Vibrant Blue */
-  --primary-foreground: oklch(0.98 0.004 263.31);
-  /* Light text for button */
-  --secondary: oklch(0.94 0.01 263.31);
-  /* Light grey-blue */
-  --secondary-foreground: oklch(0.2 0.01 263.31);
-  /* Dark blue-grey text */
-  --muted: oklch(0.94 0.01 263.31);
-  --muted-foreground: oklch(0.45 0.02 263.31);
-  --accent: oklch(0.94 0.01 263.31);
-  --accent-foreground: oklch(0.2 0.01 263.31);
-  --destructive: oklch(0.577 0.245 27.325);
-  /* Red (unchanged) */
-  --border: oklch(0.89 0.01 263.31);
-  --input: oklch(0.89 0.01 263.31);
-  --ring: oklch(0.45 0.23 263.31);
-  /* Blue ring */
-  --chart-1: oklch(0.45 0.23 263.31);
-  /* Blue */
-  --chart-2: oklch(0.6 0.118 184.704);
-  /* Cyan */
-  --chart-3: oklch(0.828 0.189 84.429);
-  /* Green */
-  --chart-4: oklch(0.769 0.188 70.08);
-  /* Yellow */
-  --chart-5: oklch(0.646 0.222 41.116);
-  /* Orange */
-  --sidebar: oklch(0.98 0.004 263.31);
-  --sidebar-foreground: oklch(0.09 0.007 263.31);
-  --sidebar-primary: oklch(0.45 0.23 263.31);
-  --sidebar-primary-foreground: oklch(0.98 0.004 263.31);
-  --sidebar-accent: oklch(0.94 0.01 263.31);
-  --sidebar-accent-foreground: oklch(0.2 0.01 263.31);
-  --sidebar-border: oklch(0.89 0.01 263.31);
-  --sidebar-ring: oklch(0.45 0.23 263.31);
+  /* Warna Primer (Brand) Anda - Ungu Terang */
+  --bs-primary: oklch(0.45 0.23 263.31);
+  --bs-primary-rgb: 82, 39, 255;
+
+  /* Warna Sekunder Baru - Tosca/Mint untuk kontras */
+  --bs-secondary: oklch(0.65 0.15 180);
+  --bs-secondary-rgb: 50, 168, 160;
+
+  /* Menetapkan font default */
+  --bs-font-sans-serif: "Inter", sans-serif;
 }
 
-/* === PALET BARU - DARK MODE === */
-.dark {
-  --background: oklch(0.12 0.01 263.31);
-  /* Dark blue-ish */
-  --foreground: oklch(0.98 0.004 263.31);
-  /* Light text */
-  --card: oklch(0.15 0.01 263.31);
-  /* Slightly lighter dark blue */
-  --card-foreground: oklch(0.98 0.004 263.31);
-  --popover: oklch(0.15 0.01 263.31);
-  --popover-foreground: oklch(0.98 0.004 263.31);
-  --primary: oklch(0.45 0.23 263.31);
-  /* Vibrant Blue */
-  --primary-foreground: oklch(0.98 0.004 263.31);
-  /* Light text for button */
-  --secondary: oklch(0.2 0.01 263.31);
-  /* Dark grey-blue */
-  --secondary-foreground: oklch(0.98 0.004 263.31);
-  --muted: oklch(0.2 0.01 263.31);
-  --muted-foreground: oklch(0.65 0.01 263.31);
-  --accent: oklch(0.2 0.01 263.31);
-  --accent-foreground: oklch(0.98 0.004 263.31);
-  --destructive: oklch(0.704 0.191 22.216);
-  /* Red (unchanged) */
-  --border: oklch(0.2 0.01 263.31);
-  --input: oklch(0.2 0.01 263.31);
-  --ring: oklch(0.45 0.23 263.31);
-  /* Blue ring */
-  --chart-1: oklch(0.45 0.23 263.31);
-  /* Blue */
-  --chart-2: oklch(0.6 0.118 184.704);
-  /* Cyan */
-  --chart-3: oklch(0.828 0.189 84.429);
-  /* Green */
-  --chart-4: oklch(0.769 0.188 70.08);
-  /* Yellow */
-  --chart-5: oklch(0.646 0.222 41.116);
-  /* Orange */
-  --sidebar: oklch(0.15 0.01 263.31);
-  --sidebar-foreground: oklch(0.98 0.004 263.31);
-  --sidebar-primary: oklch(0.45 0.23 263.31);
-  --sidebar-primary-foreground: oklch(0.98 0.004 263.31);
-  --sidebar-accent: oklch(0.2 0.01 263.31);
-  --sidebar-accent-foreground: oklch(0.98 0.004 263.31);
-  --sidebar-border: oklch(0.2 0.01 263.31);
-  --sidebar-ring: oklch(0.45 0.23 263.31);
+/* 3. Pengaturan Font Global */
+body {
+  font-family: var(--bs-font-sans-serif);
+}
+
+/* 4. TEMA LIGHT MODE (Tema "Lavender Terang") */
+[data-bs-theme="light"] {
+  /* Latar belakang bukan putih, tapi lavender yang sangat pucat */
+  --bs-body-bg: oklch(0.98 0.005 263.31);
+  --bs-body-bg-rgb: 248, 247, 250;
+
+  /* Teks bukan hitam, tapi ungu yang sangat gelap */
+  --bs-body-color: oklch(0.15 0.015 263.31);
+  --bs-body-color-rgb: 37, 36, 40;
+
+  /* Warna teks sekunder/muted */
+  --bs-secondary-color: oklch(0.4 0.015 263.31);
+  --bs-secondary-color-rgb: 104, 101, 107;
+
+  /* Border/garis pemisah */
+  --bs-border-color: oklch(0.9 0.01 263.31);
+
+  /* Kartu, dll. bisa dibuat putih bersih agar "pop-out" */
+  --bs-card-bg: #ffffff;
+}
+
+/* 5. TEMA DARK MODE (Tema Hitam Murni) */
+[data-bs-theme="dark"] {
+  /* Latar belakang diubah menjadi hitam murni */
+  --bs-body-bg: #000000;
+  --bs-body-bg-rgb: 0, 0, 0;
+
+  /* 💡 INI BARIS PENTINGNYA 💡 */
+  --bs-body-tertiary-bg: var(--bs-body-bg);
+
+  /* Teks bukan putih, tapi lavender yang sangat pucat */
+  --bs-body-color: oklch(0.98 0.005 263.31);
+  --bs-body-color-rgb: 248, 247, 250;
+
+  /* 💡 PASTIKAN ANDA MASIH PUNYA INI 💡 */
+  --bs-secondary-color: oklch(0.7 0.01 263.31);
+  --bs-secondary-color-rgb: 175, 173, 179;
+  --bs-border-color: oklch(0.3 0.02 263.31);
+  --bs-card-bg: oklch(0.2 0.02 263.31);
+}
+
+/* 6. CSS Kustom untuk Header Pill (Sudah disesuaikan) */
+.header-pill {
+  top: 1.5rem;
+  max-width: 56rem;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Efek backdrop-blur */
+  backdrop-filter: blur(16px);
+}
+
+/* Style Pill untuk Light Mode */
+[data-bs-theme="light"] .header-pill {
+  /* Menggunakan warna dasar body-bg (lavender pucat) dengan transparansi */
+  background-color: oklch(0.98 0.005 263.31 / 0.7);
+  border: 1px solid oklch(0.9 0.01 263.31);
+  /* Border lavender tipis */
+}
+
+/* Style Pill untuk Dark Mode */
+[data-bs-theme="dark"] .header-pill {
+  /* Menggunakan warna dasar body-bg (hitam) dengan transparansi */
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid oklch(0.3 0.02 263.31);
+  /* Border ungu-gelap tipis */
+}
+
+/* 7. CSS untuk Kartu Fitur "Glass" yang Theme-Aware */
+.feature-card-glass {
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: 1px solid;
+  height: 100%;
+  /* Membuat semua kartu sama tinggi */
+  border-radius: 1rem;
+  /* Samakan dengan border-radius Card default */
+}
+
+/* Style kaca untuk Light Mode (Lavender Pucat Transparan) */
+[data-bs-theme="light"] .feature-card-glass {
+  background-color: oklch(0.98 0.005 263.31 / 0.7);
+  border-color: oklch(0.9 0.01 263.31);
+}
+
+/* Style kaca untuk Dark Mode (Hitam Transparan) */
+[data-bs-theme="dark"] .feature-card-glass {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-color: oklch(0.3 0.02 263.31);
+}
+
+/* --- CSS untuk Infinite Scroller (Marquee) --- */
+
+.scroller-container {
+  /* (Opsional) Efek 'fade' di tepi agar terlihat mulus */
+  -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent);
+  mask-image: linear-gradient(to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent);
+
+  /* Sembunyikan item di luar 'jendela' */
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.scroller-track {
+  display: flex;
+  width: max-content;
+  /* 🚀 PERBAIKAN: Gunakan px agar calc() 100% akurat */
+  gap: 24px;
+  will-change: transform;
+  /* Untuk memperhalus animasi */
+
+  /* 🚀 KECEPATAN: 20s */
+  animation: scroll 20s linear infinite;
+}
+
+.scroller-item {
+  /* Beri lebar tetap untuk setiap kartu. */
+  width: 320px;
+  flex-shrink: 0;
+  /* Mencegah kartu 'menyusut' */
+}
+
+/* --- Keyframes untuk Animasi 'scroll' (Loop Mulus ke Kiri) --- */
+/* 💡 Perhitungan ini untuk BARIS 1 (6 items) 💡 */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    /* 🚀 PERBAIKAN: Diubah menjadi 6 item agar cocok dengan data TSX */
+    transform: translateX(calc(-6 * 320px - 6 * 24px));
+  }
+}
+
+/* --- CSS untuk Link Footer (Pengganti <style jsx>) --- */
+.footer-link {
+  color: var(--bs-secondary-color);
+  text-decoration: none;
+  transition: color 0.15s ease-in-out;
+}
+
+.footer-link:hover {
+  color: var(--bs-body-color);
+}
+
+/* --- 💡 SOLUSI PAKSA UNTUK FOOTER HITAM 💡 --- */
+[data-bs-theme="dark"] .bg-body-tertiary {
+  background-color: #000000 !important;
+}
+
+/* --- 💡 CSS BARU UNTUK SCROLLER BARIS KEDUA (Gerak Berlawanan) 💡 --- */
+.scroller-track-reverse {
+  /* 🚀 KECEPATAN: SINKRONKAN KE 20s */
+  animation: scroll-reverse 20s linear infinite;
+}
+
+/* 💡 Perhitungan ini untuk BARIS 2 (7 items) - Ini sudah benar */
+@keyframes scroll-reverse {
+  0% {
+    /* Perhitungan 7 item (7 * 320px) + 7 gap (7 * 24px) */
+    transform: translateX(calc(-7 * 320px - 7 * 24px));
+  }
+
+  100% {
+    transform: translateX(0);
+  }
 }

@@ -1,5 +1,6 @@
 // app/page.tsx
 import About from "@/components/Index/About";
+import Community from "@/components/Index/Community";
 import Features from "@/components/Index/Features";
 import Footer from "@/components/Index/Footer";
 import Header from "@/components/Index/Header";
@@ -7,16 +8,18 @@ import Hero from "@/components/Index/Hero";
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white text-gray-900 dark:bg-gray-950 dark:text-white">
+    // div utama dengan class Tailwind sudah tidak diperlukan lagi
+    <>
       <main>
-        <div className="relative">
+        <div className="position-relative">
           <Header />
           <Hero />
         </div>
         <About />
         <Features />
+        <Community />
       </main>
       <Footer />
-    </div>
+    </>
   );
 }

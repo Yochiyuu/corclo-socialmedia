@@ -1,42 +1,90 @@
-import { Users, Share2, MessageSquare } from "lucide-react";
+// components/Index/Features.tsx
+"use client";
+// Impor ikon yang dibutuhkan saja
+import { MessageSquare, Shield, Users } from "lucide-react";
+import { Card, Col, Container, Row } from "react-bootstrap";
 
 export default function Features() {
   return (
-    <section id="features" className="container mx-auto max-w-6xl px-4 py-24 sm:py-32">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-white sm:text-4xl">
-          What is Corclo?
-        </h2>
-        <p className="mt-4 text-lg text-gray-400">
-          Everything you need in a modern social platform.
-        </p>
-      </div>
-      <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-        {/* Fitur 1 */}
-        <div className="rounded-lg bg-gray-900 p-6 shadow-lg">
-          <Users className="h-10 w-10 text-blue-400" />
-          <h3 className="mt-4 text-xl font-semibold">Connect</h3>
-          <p className="mt-2 text-gray-400">
-            Find and connect with people who share your interests.
+    <section id="features" className="bg-body py-5">
+      <Container style={{ maxWidth: "960px" }}>
+        {/* --- Judul Fokus --- */}
+        <div className="text-center">
+          <h2 className="display-5 fw-bold text-body">
+            Built on Connection, Trust, and Chat
+          </h2>
+          <p className="fs-5 text-body-secondary mt-3">
+            Corclo is designed around three core pillars to make your digital
+            experience better.
           </p>
         </div>
-        {/* Fitur 2 */}
-        <div className="rounded-lg bg-gray-900 p-6 shadow-lg">
-          <Share2 className="h-10 w-10 text-green-400" />
-          <h3 className="mt-4 text-xl font-semibold">Share</h3>
-          <p className="mt-2 text-gray-400">
-            Share your moments, thoughts, and creations easily.
-          </p>
-        </div>
-        {/* Fitur 3 */}
-        <div className="rounded-lg bg-gray-900 p-6 shadow-lg">
-          <MessageSquare className="h-10 w-10 text-purple-400" />
-          <h3 className="mt-4 text-xl font-semibold">Discover</h3>
-          <p className="mt-2 text-gray-400">
-            Discover new content, trends, and communities.
-          </p>
-        </div>
-      </div>
+
+        {/* --- 💡 LAYOUT RINGKAS: 1x3 Grid --- */}
+        <Row className="mt-5 g-4">
+          {/* Fitur 1: Social Connection */}
+          <Col md={4}>
+            <Card className="border-0 p-3 feature-card-glass h-100">
+              <Card.Body className="text-start">
+                <div
+                  className="rounded-circle p-3 d-inline-flex"
+                  style={{ backgroundColor: "var(--bs-primary-bg-subtle)" }}
+                >
+                  <Users className="text-primary" size={32} />
+                </div>
+                <h3 className="fs-4 fw-semibold mt-4 text-body">
+                  Genuine Connection
+                </h3>
+                <Card.Text className="text-body-secondary mt-2">
+                  Find communities that truly align with your unique interests
+                  and passions. Built for depth, not fleeting trends.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* Fitur 2: Privacy & Security */}
+          <Col md={4}>
+            <Card className="border-0 p-3 feature-card-glass h-100">
+              <Card.Body className="text-start">
+                <div
+                  className="rounded-circle p-3 d-inline-flex"
+                  style={{ backgroundColor: "var(--bs-danger-bg-subtle)" }}
+                >
+                  <Shield className="text-danger" size={32} />
+                </div>
+                <h3 className="fs-4 fw-semibold mt-4 text-body">
+                  Privacy First
+                </h3>
+                <Card.Text className="text-body-secondary mt-2">
+                  Your safety is our priority. Control your data with robust,
+                  granular privacy settings and security features.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* Fitur 3: Real-time Messaging */}
+          <Col md={4}>
+            <Card className="border-0 p-3 feature-card-glass h-100">
+              <Card.Body className="text-start">
+                <div
+                  className="rounded-circle p-3 d-inline-flex"
+                  style={{ backgroundColor: "var(--bs-success-bg-subtle)" }}
+                >
+                  <MessageSquare className="text-success" size={32} />
+                </div>
+                <h3 className="fs-4 fw-semibold mt-4 text-body">
+                  Integrated Messaging
+                </h3>
+                <Card.Text className="text-body-secondary mt-2">
+                  Chat instantly with friends or community members with our
+                  powerful, built-in, real-time messenger.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </section>
   );
 }

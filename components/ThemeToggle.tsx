@@ -4,9 +4,12 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
+import { Button } from "react-bootstrap"; // Import Button
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  // 'theme' akan berisi 'light' atau 'dark'
+  // 'setTheme' akan mengatur 'data-bs-theme' berkat layout.tsx
+  const { theme, setTheme } = useTheme(); 
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -14,25 +17,41 @@ export function ThemeToggle() {
   }, []);
 
   if (!isMounted) {
-    // Render placeholder agar tidak ada layout shift
+    // Render placeholder
     return (
-      <button
-        className="flex h-10 w-10 items-center justify-center rounded-full"
+      <Button
+        variant="outline-secondary"
+        className="rounded-circle"
+        style={{ width: "40px", height: "40px" }}
         aria-label="Toggle theme"
         disabled
       />
     );
   }
 
+  const isDark = theme === "dark";
+
   return (
-    <button
-      onClick={() => (theme === "dark" ? setTheme("light") : setTheme("dark"))}
-      className="flex h-10 w-10 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800"
+    <Button
+      variant="outline-secondary" // Gunakan varian Bootstrap
+      className="rounded-circle"      // Buat jadi lingkaran
+      style={{ width: "40px", height: "40px", position: "relative" }}
+      onClick={() => (isDark ? setTheme("light") : setTheme("dark"))}
       aria-label="Toggle theme"
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </button>
+      <Sun
+        size={20}
+        className={`position-absolute top-50 start-50 translate-middle transition-all ${
+          isDark ? "rotate-90 scale-0" : "rotate-0 scale-100"
+        }`}
+      />
+      <Moon
+        size={20}
+        className={`position-absolute top-50 start-50 translate-middle transition-all ${
+          isDark ? "rotate-0 scale-100" : "-rotate-90 scale-0"
+        }`}
+      />
+      <span className="visually-hidden">Toggle theme</span>
+    </Button>
   );
 }
