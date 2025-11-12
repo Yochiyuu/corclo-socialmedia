@@ -1,28 +1,38 @@
-"use client"
+// components/ui/separator.tsx
+// Diubah untuk menggunakan elemen Bootstrap/HTML standar
+import * as React from "react";
 
-import * as React from "react"
-import * as SeparatorPrimitive from "@radix-ui/react-separator"
-
-import { cn } from "@/lib/utils"
-
-function Separator({
-  className,
-  orientation = "horizontal",
-  decorative = true,
-  ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
-  return (
-    <SeparatorPrimitive.Root
-      data-slot="separator"
-      decorative={decorative}
-      orientation={orientation}
-      className={cn(
-        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
-        className
-      )}
-      {...props}
-    />
-  )
+interface SeparatorProps
+  extends React.HTMLAttributes<HTMLHRElement | HTMLDivElement> {
+  orientation?: "horizontal" | "vertical";
+  decorative?: boolean;
 }
 
-export { Separator }
+const Separator = React.forwardRef<HTMLHRElement, SeparatorProps>(
+  ({ className, orientation = "horizontal", ...props }, ref) => {
+    if (orientation === "vertical") {
+      // Gunakan helper 'vr' (vertical rule) dari Bootstrap 5
+      // 'vr' adalah <div>, jadi kita ubah elemennya
+      return (
+        <div
+          className={`vr ${className || ""}`}
+          {...(props as React.HTMLAttributes<HTMLDivElement>)}
+          // 'ref' tidak bisa langsung ke 'div' jika kita ingin 'hr'
+          // Ini adalah kompromi.
+        />
+      );
+    }
+
+    // Default adalah 'hr' (horizontal rule)
+    return (
+      <hr
+        ref={ref}
+        className={className}
+        {...(props as React.HTMLAttributes<HTMLHRElement>)}
+      />
+    );
+  }
+);
+Separator.displayName = "Separator";
+
+export { Separator };
