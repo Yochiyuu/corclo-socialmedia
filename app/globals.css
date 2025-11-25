@@ -1,4 +1,3 @@
-/* app/globals.css */
 body {
   background-color: #121212 !important;
   color: #e0e0e0 !important;
@@ -21,7 +20,6 @@ body {
   background: #555;
 }
 
-/* Tambahan untuk Community Component */
 .group-card-hover:hover {
   transform: translateY(-5px);
   border-color: rgba(124, 58, 237, 0.5) !important;

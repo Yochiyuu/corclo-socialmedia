@@ -25,7 +25,6 @@ export default async function PostDetailPage({ params }: Props) {
           <div className="col-md-8">
             <Card className="bg-dark border border-secondary border-opacity-50 rounded-4 text-white shadow-lg">
               <Card.Body className="p-4">
-                {/* Header Penulis */}
                 <div className="d-flex align-items-center gap-3 mb-4">
                   <Image
                     src={post.author.avatar || "/images/default-avatar.png"}
@@ -43,7 +42,6 @@ export default async function PostDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                {/* Isi Konten */}
                 <p
                   className="fs-4 mb-4"
                   style={{ whiteSpace: "pre-wrap", lineHeight: "1.6" }}
@@ -51,11 +49,9 @@ export default async function PostDetailPage({ params }: Props) {
                   {post.content}
                 </p>
 
-                {/* Media */}
                 {post.mediaUrl && (
                   <div className="mb-4 rounded-3 overflow-hidden">
                     {post.mediaType === "IMAGE" ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={post.mediaUrl}
                         alt="Post media"

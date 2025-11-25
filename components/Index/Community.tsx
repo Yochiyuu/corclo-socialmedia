@@ -70,7 +70,6 @@ export default function Community() {
         alignItems: "center",
       }}
     >
-      {/* Background sama seperti sebelumnya */}
       <div
         className="position-absolute w-100 h-100 top-0 start-0"
         style={{
@@ -142,7 +141,6 @@ export default function Community() {
                         className="position-relative"
                         style={{ height: "150px" }}
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={group.banner}
                           alt={group.name}

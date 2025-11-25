@@ -1,9 +1,8 @@
 "use client";
 
-import { Heart, MessageCircle, Share2 } from "lucide-react"; // Hiasan ikon
+import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { Button, Card, Image } from "react-bootstrap";
 
-// Definisikan tipe data agar TypeScript senang
 type PostWithAuthor = {
   id: number;
   content: string;
@@ -33,7 +32,6 @@ export default function PostList({ posts }: { posts: PostWithAuthor[] }) {
           style={{ backgroundColor: "#1e1e1e" }}
         >
           <Card.Body className="p-4">
-            {/* Header Postingan */}
             <div className="d-flex align-items-center gap-3 mb-3">
               <Image
                 src={post.author.avatar || "/images/default-avatar.png"}
@@ -54,7 +52,6 @@ export default function PostList({ posts }: { posts: PostWithAuthor[] }) {
               </small>
             </div>
 
-            {/* Isi Postingan */}
             <p
               className="lead fs-6 mb-4 fw-normal text-light"
               style={{ whiteSpace: "pre-line" }}
@@ -62,7 +59,6 @@ export default function PostList({ posts }: { posts: PostWithAuthor[] }) {
               {post.content}
             </p>
 
-            {/* Action Buttons (Hiasan) */}
             <div className="d-flex gap-4 border-top border-secondary border-opacity-25 pt-3">
               <Button
                 variant="link"

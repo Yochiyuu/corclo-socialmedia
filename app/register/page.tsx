@@ -2,20 +2,25 @@
 
 import { ArrowRight, AtSign, Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
-import { Button, Card, Container, Form, InputGroup } from "react-bootstrap"; // Form tetap diimport untuk komponen anaknya
+import { useActionState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Container,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
 import { registerUser } from "../actions";
 
 export default function RegisterPage() {
+  const [state, formAction, isPending] = useActionState(registerUser, null);
+
   return (
     <section
       className="d-flex align-items-center min-vh-100 position-relative overflow-hidden"
       style={{ backgroundColor: "#050505", color: "white" }}
     >
-      {/* ... (Bagian Background biarkan sama) ... */}
-      <div
-        className="position-absolute w-100 h-100 top-0 start-0"
-        style={{ zIndex: 0 /* ...background styles... */ }}
-      />
 
       <Container style={{ zIndex: 2 }}>
         <div className="row justify-content-center">
@@ -36,9 +41,16 @@ export default function RegisterPage() {
                   </p>
                 </div>
 
-                {/* [PERBAIKAN DI SINI] Ganti Form (besar) jadi form (kecil) */}
-                <form action={registerUser}>
-                  {/* Input Full Name */}
+                {state?.success === false && (
+                  <Alert
+                    variant="danger"
+                    className="py-2 small mb-4 text-center"
+                  >
+                    {state.message}
+                  </Alert>
+                )}
+
+                <form action={formAction}>
                   <Form.Group className="mb-3">
                     <Form.Label className="small text-secondary fw-bold">
                       FULL NAME
@@ -57,7 +69,6 @@ export default function RegisterPage() {
                     </InputGroup>
                   </Form.Group>
 
-                  {/* Input Username */}
                   <Form.Group className="mb-3">
                     <Form.Label className="small text-secondary fw-bold">
                       USERNAME
@@ -76,7 +87,6 @@ export default function RegisterPage() {
                     </InputGroup>
                   </Form.Group>
 
-                  {/* Input Email */}
                   <Form.Group className="mb-3">
                     <Form.Label className="small text-secondary fw-bold">
                       EMAIL
@@ -95,7 +105,6 @@ export default function RegisterPage() {
                     </InputGroup>
                   </Form.Group>
 
-                  {/* Input Password */}
                   <Form.Group className="mb-4">
                     <Form.Label className="small text-secondary fw-bold">
                       PASSWORD
@@ -117,16 +126,16 @@ export default function RegisterPage() {
                   <Button
                     variant="primary"
                     type="submit"
+                    disabled={isPending}
                     className="w-100 py-2 fw-bold rounded-pill d-flex align-items-center justify-content-center gap-2"
                     style={{
                       background: "linear-gradient(to right, #7c3aed, #6d28d9)",
                       border: "none",
                     }}
                   >
-                    Sign Up Free <ArrowRight size={18} />
+                    {isPending ? "Creating..." : "Sign Up Free"}{" "}
+                    <ArrowRight size={18} />
                   </Button>
-
-                  {/* [PERBAIKAN DI SINI] Tutup form (kecil) */}
                 </form>
 
                 <div className="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">

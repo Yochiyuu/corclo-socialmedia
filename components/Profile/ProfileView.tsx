@@ -4,7 +4,7 @@ import { createPost, logout } from "@/app/actions";
 import { Image as ImageIcon, X } from "lucide-react";
 import { useState } from "react";
 import { Button, Card, Container, Form, Image } from "react-bootstrap";
-import { useFormStatus } from "react-dom"; // [1] Import Wajib
+import { useFormStatus } from "react-dom";
 
 type UserWithPosts = {
   name: string;
@@ -45,16 +45,15 @@ export default function ProfileView({
     if (input) input.value = "";
   };
 
-  // [2] Komponen Tombol Khusus (Dibuat di sini)
   function TombolPosting() {
-    const { pending } = useFormStatus(); // Otomatis tahu kalau lagi loading
+    const { pending } = useFormStatus();
 
     return (
       <Button
         type="submit"
         className="px-4 fw-bold"
         style={{ backgroundColor: "#7c3aed", border: "none" }}
-        disabled={pending} // Matikan tombol saat loading
+        disabled={pending}
       >
         {pending ? "Lagi Posting..." : "Posting"}
       </Button>
@@ -64,7 +63,6 @@ export default function ProfileView({
   return (
     <section className="min-vh-100 py-5 bg-dark text-white">
       <Container>
-        {/* Header Profile */}
         <div className="d-flex align-items-center gap-4 mb-5 border-bottom border-secondary pb-4">
           <Image
             src={user.avatar || "/images/default-avatar.png"}
@@ -80,7 +78,6 @@ export default function ProfileView({
             <p className="text-secondary small">{user.email}</p>
           </div>
 
-          {/* Tombol Logout (Hanya tampil di profil sendiri) */}
           {isOwnProfile && (
             <Button variant="outline-danger" size="sm" onClick={() => logout()}>
               Logout
@@ -88,13 +85,11 @@ export default function ProfileView({
           )}
         </div>
 
-        {/* Form Posting (Hanya tampil di profil sendiri) */}
         {isOwnProfile && (
           <Card className="bg-secondary bg-opacity-10 border-0 rounded-4 mb-5">
             <Card.Body>
               <h5 className="fw-bold mb-3 text-white">Buat Postingan Baru</h5>
 
-              {/* [PENTING] Gunakan tag form (huruf kecil) agar stabil */}
               <form action={createPost}>
                 <Form.Group className="mb-3">
                   <Form.Control
@@ -107,7 +102,6 @@ export default function ProfileView({
                   />
                 </Form.Group>
 
-                {/* Preview Media (Ini yang tadi hilang/error) */}
                 {preview && (
                   <div className="position-relative mb-3 fit-content d-inline-block">
                     <Button
@@ -120,7 +114,6 @@ export default function ProfileView({
                       <X size={14} />
                     </Button>
                     {fileType === "image" ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={preview}
                         alt="Preview"
@@ -158,7 +151,6 @@ export default function ProfileView({
                     />
                   </div>
 
-                  {/* [3] Tombol Baru Dipasang Di Sini */}
                   <TombolPosting />
                 </div>
               </form>
@@ -166,7 +158,6 @@ export default function ProfileView({
           </Card>
         )}
 
-        {/* List Postingan */}
         <h4 className="fw-bold mb-4">
           {isOwnProfile ? "Timeline Kamu" : `Postingan ${user.name}`}
         </h4>
@@ -181,11 +172,9 @@ export default function ProfileView({
                   {post.content}
                 </p>
 
-                {/* Menampilkan Gambar/Video Postingan */}
                 {post.mediaUrl && (
                   <div className="mb-3 rounded-3 overflow-hidden border border-secondary border-opacity-25">
                     {post.mediaType === "IMAGE" ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={post.mediaUrl}
                         alt="Post media"

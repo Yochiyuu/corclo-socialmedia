@@ -91,7 +91,6 @@ export default function Footer() {
             </div>
           </Col>
 
-          {/* Links: Platform */}
           <Col lg={2} md={6} xs={6}>
             <h6 className="fw-bold mb-4 text-white tracking-wide">Platform</h6>
             <Nav className="flex-column gap-2">
@@ -136,7 +135,6 @@ export default function Footer() {
             </Nav>
           </Col>
 
-          {/* Links: Legal */}
           <Col lg={3} md={6}>
             <h6 className="fw-bold mb-4 text-white tracking-wide">Legal</h6>
             <div className="d-flex flex-column gap-2">

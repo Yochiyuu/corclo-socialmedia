@@ -2,35 +2,25 @@
 
 import { ArrowRight, Lock, Mail } from "lucide-react";
 import Link from "next/link";
-import { Button, Card, Container, Form, InputGroup } from "react-bootstrap";
+import { useActionState } from "react";
+import {
+  Alert,
+  Button,
+  Card,
+  Container,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
 import { loginUser } from "../actions";
 
 export default function LoginPage() {
+  const [state, formAction, isPending] = useActionState(loginUser, null);
+
   return (
     <section
       className="d-flex align-items-center min-vh-100 position-relative overflow-hidden"
       style={{ backgroundColor: "#050505", color: "white" }}
     >
-      {/* Background Effects */}
-      <div
-        className="position-absolute w-100 h-100 top-0 start-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%)", // Aksen Pink sedikit
-          zIndex: 0,
-        }}
-      />
-      <div
-        className="position-absolute w-100 h-100 top-0 start-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
-          backgroundSize: "50px 50px",
-          maskImage:
-            "linear-gradient(to bottom, transparent, black, transparent)",
-          zIndex: 0,
-        }}
-      />
 
       <Container style={{ zIndex: 2 }}>
         <div className="row justify-content-center">
@@ -51,8 +41,16 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                <Form action={loginUser}>
-                  {/* Email */}
+                {state?.success === false && (
+                  <Alert
+                    variant="danger"
+                    className="py-2 small mb-4 text-center"
+                  >
+                    {state.message}
+                  </Alert>
+                )}
+
+                <form action={formAction}>
                   <Form.Group className="mb-3">
                     <Form.Label className="small text-secondary fw-bold">
                       EMAIL ADDRESS
@@ -71,20 +69,11 @@ export default function LoginPage() {
                     </InputGroup>
                   </Form.Group>
 
-                  {/* Password */}
                   <Form.Group className="mb-4">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <Form.Label className="small text-secondary fw-bold mb-0">
-                        PASSWORD
-                      </Form.Label>
-                      <Link
-                        href="#"
-                        className="small text-primary text-decoration-none"
-                      >
-                        Forgot Password?
-                      </Link>
-                    </div>
-                    <InputGroup className="mt-2">
+                    <Form.Label className="small text-secondary fw-bold">
+                      PASSWORD
+                    </Form.Label>
+                    <InputGroup>
                       <InputGroup.Text className="bg-dark border-secondary text-secondary">
                         <Lock size={18} />
                       </InputGroup.Text>
@@ -101,16 +90,17 @@ export default function LoginPage() {
                   <Button
                     variant="primary"
                     type="submit"
+                    disabled={isPending}
                     className="w-100 py-2 fw-bold rounded-pill d-flex align-items-center justify-content-center gap-2"
                     style={{
                       background: "linear-gradient(to right, #7c3aed, #6d28d9)",
                       border: "none",
-                      boxShadow: "0 4px 15px rgba(124, 58, 237, 0.3)",
                     }}
                   >
-                    Sign In <ArrowRight size={18} />
+                    {isPending ? "Loading..." : "Sign In"}{" "}
+                    <ArrowRight size={18} />
                   </Button>
-                </Form>
+                </form>
 
                 <div className="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
                   <span className="text-secondary small">
