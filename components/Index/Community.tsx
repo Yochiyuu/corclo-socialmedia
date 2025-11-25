@@ -70,6 +70,7 @@ export default function Community() {
         alignItems: "center",
       }}
     >
+      {/* Background sama seperti sebelumnya */}
       <div
         className="position-absolute w-100 h-100 top-0 start-0"
         style={{
@@ -79,26 +80,11 @@ export default function Community() {
         }}
       />
 
-      <div
-        className="position-absolute w-100 h-100 top-0 start-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-          maskImage:
-            "linear-gradient(to bottom, transparent, black, black, transparent)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, transparent 10%, black 40%, black 70%, transparent 90%)",
-          zIndex: 0,
-        }}
-      />
-
       <Container className="position-relative" style={{ zIndex: 2 }}>
         <Row className="align-items-center g-5">
           <Col
             lg={5}
-            className="text-center text-lg-start align-self-start sticky-lg-top"
-            style={{ top: "100px" }}
+            className="text-center text-lg-start align-self-start sticky-lg-top-custom"
           >
             <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-white border-opacity-10 bg-white bg-opacity-5 mb-4">
               <Zap size={14} className="text-warning" />
@@ -125,28 +111,21 @@ export default function Community() {
               nyata.
             </p>
 
-            <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start">
-              <Link
-                href="/explore"
-                className="btn btn-primary rounded-pill px-4 py-2 fw-bold"
-                style={{
-                  background: "#7c3aed",
-                  border: "none",
-                  boxShadow: "0 4px 20px rgba(124, 58, 237, 0.4)",
-                }}
-              >
-                Explore Groups
-              </Link>
-            </div>
+            <Link
+              href="/explore"
+              className="btn btn-primary rounded-pill px-4 py-2 fw-bold"
+              style={{
+                background: "#7c3aed",
+                border: "none",
+                boxShadow: "0 4px 20px rgba(124, 58, 237, 0.4)",
+              }}
+            >
+              Explore Groups
+            </Link>
           </Col>
 
           <Col lg={7}>
             <div className="position-relative">
-              <div
-                className="position-absolute top-50 start-50 translate-middle w-75 h-75 bg-primary rounded-circle opacity-25"
-                style={{ filter: "blur(80px)" }}
-              ></div>
-
               <Row className="g-3">
                 {featuredGroups.map((group, index) => (
                   <Col md={index === 2 ? 12 : 6} key={group.id}>
@@ -159,7 +138,6 @@ export default function Community() {
                         transition: "all 0.3s ease",
                       }}
                     >
-                      {/* === BANNER IMAGE === */}
                       <div
                         className="position-relative"
                         style={{ height: "150px" }}
@@ -189,7 +167,7 @@ export default function Community() {
                           style={{ marginTop: "-32px" }}
                         >
                           <div
-                            className={`rounded-3 p-2 d-flex align-items-center justify-content-center bg-gradient ${group.color}`}
+                            className={`rounded-3 p-2 d-flex align-items-center justify-content-center bg-gradient-community ${group.color}`}
                             style={{
                               width: "56px",
                               height: "56px",
@@ -253,31 +231,6 @@ export default function Community() {
           </Col>
         </Row>
       </Container>
-
-      <style jsx>{`
-        .group-card-hover:hover {
-          transform: translateY(-5px);
-          border-color: rgba(124, 58, 237, 0.5) !important;
-          box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
-        }
-        .bg-gradient {
-          background-size: 200% 200%;
-        }
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-        .backdrop-blur {
-          backdrop-filter: blur(4px);
-        }
-        .sticky-lg-top {
-          position: -webkit-sticky;
-          position: sticky;
-          top: 100px;
-        }
-      `}</style>
     </section>
   );
 }

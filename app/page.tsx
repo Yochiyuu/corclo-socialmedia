@@ -5,7 +5,7 @@ import Footer from "@/components/Index/Footer";
 import Header from "@/components/Index/Header";
 import Hero from "@/components/Index/Hero";
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <main className="bg-black min-h-screen">
       <Header />
