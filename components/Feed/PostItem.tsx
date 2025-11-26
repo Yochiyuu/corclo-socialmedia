@@ -212,7 +212,7 @@ export default function PostItem({ post, currentUserId }: PostProps) {
               <InputGroup>
                 <Form.Control
                   placeholder="Tulis komentar..."
-                  className="bg-dark border-secondary text-white text-sm"
+                  className="bg-dark border-secondary text-white"
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   style={{ fontSize: "0.9rem" }}

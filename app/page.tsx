@@ -7,7 +7,7 @@ import Hero from "@/components/Index/Hero";
 
 export default function LandingPage() {
   return (
-    <main className="bg-black min-h-screen">
+    <main className="bg-black min-vh-100">
       <Header />
       <Hero />
       <About />

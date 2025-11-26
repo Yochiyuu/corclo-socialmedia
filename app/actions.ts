@@ -264,3 +264,31 @@ export async function toggleFollow(targetUserId: number) {
     console.error("Error toggling follow:", error);
   }
 }
+
+export async function searchUsers(query: string) {
+  if (!query || query.trim().length === 0) {
+    return [];
+  }
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { name: { contains: query } }, // Hapus mode: 'insensitive' jika pakai SQLite standar, tapi biarkan jika Postgres
+          { username: { contains: query } },
+        ],
+      },
+      take: 5, // Batasi hasil pencarian maksimal 5 user
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        avatar: true,
+      },
+    });
+    return users;
+  } catch (error) {
+    console.error("Search Error:", error);
+    return [];
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { createPost, logout, toggleFollow } from "@/app/actions";
+import { createPost, logout, searchUsers, toggleFollow } from "@/app/actions";
 import PostList, { PostWithRelations } from "@/components/Feed/PostList";
 import {
   Bell,
@@ -24,6 +24,7 @@ import {
   Container,
   Form,
   Image,
+  ListGroup,
   Nav,
   Navbar,
   Row,
@@ -40,6 +41,13 @@ type UserProfileData = {
     followedBy: number;
     following: number;
   };
+};
+
+type SearchResultUser = {
+  id: number;
+  name: string;
+  username: string;
+  avatar: string | null;
 };
 
 type HomeViewProps = {
@@ -62,6 +70,24 @@ export default function HomeView({
 }: HomeViewProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const [fileType, setFileType] = useState<"image" | "video" | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResultUser[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length > 0) {
+      setIsSearching(true);
+      const results = await searchUsers(query);
+      setSearchResults(results);
+      setIsSearching(false);
+    } else {
+      setSearchResults([]);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -109,38 +135,94 @@ export default function HomeView({
         <Container>
           <Navbar.Brand
             href="/home"
-            className="fw-bold text-white fs-3 tracking-tight me-5 d-flex align-items-center gap-2"
+            className="fw-bold text-white fs-3 me-5 d-flex align-items-center gap-2"
           >
-            <div
-              className="rounded-circle bg-primary d-flex align-items-center justify-content-center"
-              style={{
-                width: 32,
-                height: 32,
-                background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
-              }}
-            >
-              <span className="text-white fw-bold fs-6">C</span>
-            </div>
-            Corclo.
+            Corclo
           </Navbar.Brand>
 
           <div
-            className="flex-grow-1 d-none d-md-block mx-auto"
+            className="flex-grow-1 d-none d-md-block mx-auto position-relative"
             style={{ maxWidth: "500px" }}
           >
             <div className="position-relative">
               <Search
                 className="position-absolute text-secondary"
                 size={18}
-                style={{ top: 12, left: 20 }}
+                style={{ top: 12, left: 20, zIndex: 5 }}
               />
               <Form.Control
                 type="text"
                 placeholder="Cari di Corclo..."
                 className="bg-black border-secondary border-opacity-25 text-white rounded-pill ps-5 py-2"
                 style={{ boxShadow: "none", fontSize: "0.95rem" }}
+                value={searchQuery}
+                onChange={handleSearch}
+                autoComplete="off"
               />
             </div>
+
+            {searchQuery && (
+              <div
+                className="position-absolute w-100 mt-2 rounded-4 overflow-hidden shadow-lg"
+                style={{
+                  backgroundColor: "#1e1e1e",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  zIndex: 1000,
+                }}
+              >
+                {isSearching ? (
+                  <div className="p-3 text-center text-secondary small">
+                    Mencari...
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  <ListGroup variant="flush">
+                    {searchResults.map((user) => (
+                      <Link
+                        key={user.id}
+                        href={`/profile/${user.username}`}
+                        className="text-decoration-none"
+                        onClick={() => {
+                          setSearchQuery("");
+                          setSearchResults([]);
+                        }}
+                      >
+                        <ListGroup.Item
+                          className="bg-transparent text-white border-secondary border-opacity-10 d-flex align-items-center gap-3 px-3 py-2 action-hover"
+                          style={{ cursor: "pointer" }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "rgba(255,255,255,0.05)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "transparent")
+                          }
+                        >
+                          <Image
+                            src={user.avatar || "/images/default-avatar.png"}
+                            roundedCircle
+                            width={36}
+                            height={36}
+                            alt={user.username}
+                            style={{ objectFit: "cover" }}
+                          />
+                          <div>
+                            <div className="fw-bold small">{user.name}</div>
+                            <div className="text-secondary small">
+                              @{user.username}
+                            </div>
+                          </div>
+                        </ListGroup.Item>
+                      </Link>
+                    ))}
+                  </ListGroup>
+                ) : (
+                  <div className="p-3 text-center text-secondary small">
+                    Tidak ada pengguna ditemukan.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="d-flex align-items-center gap-3 ms-auto">

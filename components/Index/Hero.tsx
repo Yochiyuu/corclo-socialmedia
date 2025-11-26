@@ -49,7 +49,7 @@ export default function Hero() {
             </div>
 
             <h1
-              className="display-2 fw-bold text-white mb-4 tracking-tight"
+              className="display-2 fw-bold text-white mb-4"
               style={{ letterSpacing: "-2px" }}
             >
               The Social Network <br />

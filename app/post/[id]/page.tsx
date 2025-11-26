@@ -18,7 +18,7 @@ export default async function PostDetailPage({ params }: Props) {
   if (!post) return notFound();
 
   return (
-    <main className="bg-black min-h-screen">
+    <main className="bg-black min-vh-100">
       <Header />
       <Container className="py-5 mt-5">
         <div className="row justify-content-center">

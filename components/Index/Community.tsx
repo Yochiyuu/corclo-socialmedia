@@ -177,7 +177,8 @@ export default function Community() {
                           </div>
                           <Badge
                             bg="dark"
-                            className="border border-secondary border-opacity-25 text-secondary fw-normal px-3 py-2 rounded-pill bg-opacity-75 backdrop-blur"
+                            className="border border-secondary border-opacity-25 text-secondary fw-normal px-3 py-2 rounded-pill bg-opacity-75"
+                            style={{ backdropFilter: "blur(5px)" }}
                           >
                             <small className="d-flex align-items-center gap-1">
                               <div
@@ -192,7 +193,15 @@ export default function Community() {
                         <h5 className="fw-bold text-white mb-2">
                           {group.name}
                         </h5>
-                        <p className="text-secondary small mb-3 line-clamp-2">
+                        <p
+                          className="text-secondary small mb-3"
+                          style={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
                           {group.desc}
                         </p>
 
