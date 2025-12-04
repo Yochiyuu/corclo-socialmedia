@@ -1,6 +1,7 @@
 "use client";
 
-import { Zap } from "lucide-react";
+import AppSidebar from "@/components/Layout/AppSidebar";
+import { Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Container, Row, Col, Card, Image, Badge } from "react-bootstrap";
 import AffinityPingForm from "./AffinityPingForm";
@@ -28,9 +29,17 @@ export default function AffinityEchoView({
             <Row className="g-4 justify-content-center">
                 
                 <Col lg={10} md={12}>
+                    {/* --- BACK TO HOME LINK --- */}
+                    <div className="mb-4">
+                        <Link href="/home" className="text-secondary small d-inline-flex align-items-center text-decoration-none hover-text-primary">
+                            <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} /> Kembali ke Home
+                        </Link>
+                    </div>
+
                     <h2 className="fw-bold mb-4 d-flex align-items-center gap-2 border-bottom border-secondary border-opacity-25 pb-3">
                         <Zap size={32} className="text-warning" /> Affinity Echo (Gema Afinitas)
                     </h2>
+                            
                     <p className="text-secondary lead mb-5">
                         Temukan koneksi otentik berdasarkan interaksi dan minat bersama. Desain anti-algoritma.
                     </p>
@@ -42,11 +51,11 @@ export default function AffinityEchoView({
                                     
                                     {/* Affinity Visualizer */}
                                     <div className="p-4 bg-dark position-relative" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                                        {/* Gema Ungu (Proximity/Mutuals) */}
+                                        {/* ... (Gema Ungu & Avatar) ... */}
                                         <div 
                                             className="rounded-circle position-absolute top-50 start-50 translate-middle animate-pulse-slow"
                                             style={{ 
-                                                width: `${80 + user.mutualFollowers * 30}px`,
+                                                width: `${80 + user.mutualFollowers * 30}px`, 
                                                 height: `${80 + user.mutualFollowers * 30}px`, 
                                                 backgroundColor: 'rgba(124, 58, 237, 0.1)', 
                                                 transition: 'all 0.5s ease',
@@ -54,7 +63,6 @@ export default function AffinityEchoView({
                                             }}
                                         />
 
-                                        {/* Avatar */}
                                         <Image
                                             src={user.avatar || "/images/default-avatar.png"}
                                             roundedCircle

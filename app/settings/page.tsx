@@ -4,8 +4,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import AppHeader from "@/components/Layout/AppHeader";
 import DataAutonomyDashboard from "@/components/Settings/DataAutonomyDashboard";
-import { Container, Row, Col, Card, Button, ListGroup } from "react-bootstrap";
-import { Shield, ChevronRight, Settings } from "lucide-react";
+import SettingsActionItem from "@/components/Settings/SettingsActionItem";
+import { Container, Row, Col, Card, Button, ListGroup, Form } from "react-bootstrap";
+import { Shield, ChevronRight, Settings, Bell} from "lucide-react";
 import Link from "next/link";
 
 async function getSettingsData(currentUserId: number) {
@@ -38,7 +39,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { v
   });
 
   if (!currentUser) redirect("/login");
-
+  
   const resolvedSearchParams = await (searchParams as any);
   const viewParam = resolvedSearchParams.view;
   
@@ -48,22 +49,62 @@ export default async function SettingsPage({ searchParams }: { searchParams: { v
     dashboardData = await getSettingsData(currentUserId);
   }
 
+  const BackLink = ({ target }: { target: string }) => (
+    <Link href={target} className="text-secondary small d-inline-flex align-items-center text-decoration-none hover-text-primary mb-4">
+        <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} /> Kembali ke {target === '/home' ? 'Home' : 'Pengaturan'}
+    </Link>
+  );
+
   return (
     <>
       <AppHeader currentUser={currentUser} />
       <Container className="py-4">
         <Row className="g-4 justify-content-center">
             <Col lg={8} md={12}>
-                {viewParam === 'dashboard' ? (
-                    // --- TAMPILAN DASHBOARD ---
+                {/* --- BACK TO HOME LINK --- */}
+                {viewParam ? (
+                    <BackLink target="/settings" />
+                ) : (
                     <div className="mb-4">
-                        <Link href="/settings" className="text-secondary small mb-3 d-inline-flex align-items-center text-decoration-none hover-text-primary">
-                            <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} /> Kembali ke Pengaturan
-                        </Link>
+                        <BackLink target="/home" />
+                    </div>
+                )}
+
+                {/* --- Dynamic Content Rendering --- */}
+                {viewParam === 'dashboard' ? (
+                    // DASHBOARD
+                    <div className="mb-4">
                         {dashboardData && <DataAutonomyDashboard {...dashboardData} />}
                     </div>
+                ) : viewParam === 'privacy' ? (
+                    // PRIVASI & KEAMANAN
+                    <div className="mb-4">
+                        <h2 className="fw-bold mb-4 d-flex align-items-center gap-2"><Shield size={32} className="text-success" /> Privasi & Keamanan</h2>
+                        <Card className="bg-dark border-secondary border-opacity-25">
+                            <ListGroup variant="flush">
+                                <SettingsActionItem href="#" text="Mode Akun Privat" isSwitch={true} />
+                                <SettingsActionItem href="#" text="Tampilkan Status Aktif" isSwitch={true} />
+                                <SettingsActionItem href="#" text="Izinkan Pesan dari Siapa Saja" isSwitch={true} />
+                                <SettingsActionItem href="#" text="Kelola Daftar Blokir" />
+                                <SettingsActionItem href="#" text="History Log In" />
+                            </ListGroup>
+                        </Card>
+                    </div>
+                ) : viewParam === 'notifications' ? (
+                    // NOTIFIKASI
+                    <div className="mb-4">
+                        <h2 className="fw-bold mb-4 d-flex align-items-center gap-2"><Bell size={32} className="text-info" /> Pengaturan Notifikasi</h2>
+                        <Card className="bg-dark border-secondary border-opacity-25">
+                            <ListGroup variant="flush">
+                                <SettingsActionItem href="#" text="Notifikasi Postingan Baru" isSwitch={true} />
+                                <SettingsActionItem href="#" text="Notifikasi Komentar & Likes" isSwitch={true} />
+                                <SettingsActionItem href="#" text="Notifikasi Pesan Langsung" isSwitch={true} />
+                                <SettingsActionItem href="#" text="Notifikasi Email" isSwitch={true} />
+                            </ListGroup>
+                        </Card>
+                    </div>
                 ) : (
-                    // --- TAMPILAN SETTINGS HUB (DEFAULT) ---
+                    // SETTINGS HUB (DEFAULT)
                     <>
                         <h2 className="fw-bold mb-4 d-flex align-items-center gap-2">
                             <Settings size={32} className="text-primary" /> Pengaturan Akun
@@ -71,14 +112,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: { v
                         
                         <Card className="mb-3 bg-dark border-secondary border-opacity-25">
                             <ListGroup variant="flush">
-                                <Link href="#" className="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center py-3 hover-bg-opacity border-secondary border-opacity-10">
-                                    <span className="fw-bold">Privasi & Keamanan</span>
-                                    <ChevronRight size={18} className="text-secondary" />
-                                </Link>
-                                <Link href="#" className="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center py-3 hover-bg-opacity border-secondary border-opacity-10">
-                                    <span className="fw-bold">Notifikasi</span>
-                                    <ChevronRight size={18} className="text-secondary" />
-                                </Link>
+                                {/* Navigasi Utama */}
+                                <SettingsActionItem href="/settings?view=privacy" text="Privasi & Keamanan" />
+                                <SettingsActionItem href="/settings?view=notifications" text="Notifikasi" />
                                 <Link href="/settings?view=dashboard" className="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center py-3 hover-bg-opacity border-secondary border-opacity-10">
                                     <span className="fw-bold d-flex align-items-center gap-2">
                                         <Shield size={20} className="text-success"/> Dasbor Otonomi Data
@@ -90,14 +126,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: { v
 
                         <Card className="mb-3 bg-dark border-secondary border-opacity-25">
                              <ListGroup variant="flush">
-                                <Link href="/profile/edit" className="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center py-3 hover-bg-opacity border-secondary border-opacity-10">
-                                    <span className="fw-bold">Edit Profil</span>
-                                    <ChevronRight size={18} className="text-secondary" />
-                                </Link>
-                                <Link href="#" className="list-group-item bg-transparent text-danger d-flex justify-content-between align-items-center py-3 hover-bg-opacity border-secondary border-opacity-10">
-                                    <span className="fw-bold">Hapus Akun</span>
-                                    <ChevronRight size={18} className="text-secondary" />
-                                </Link>
+                                <SettingsActionItem href="/profile/edit" text="Edit Profil" />
+                                {/* FIX: Hapus prop icon={X} */}
+                                <SettingsActionItem href="#" text="Hapus Akun" isDanger={true} />
+                                <SettingsActionItem href="#" text="Log Out" isDanger={true} isLogout={true} /> 
                             </ListGroup>
                         </Card>
                     </>
