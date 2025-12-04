@@ -89,18 +89,29 @@ export default function ExploreView({
   const [isPending, startTransition] = useTransition();
   const commentFormRef = useRef<HTMLFormElement>(null);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
-  const [showAllComments, setShowAllComments] = useState(false); 
+  const [showAllComments, setShowAllComments] = useState(false);
 
   const fetchPostDetails = useCallback(async (postId: number) => {
     setIsFetchingDetails(true);
     const details = await getPostDetails(postId);
     if (details) {
-      setPostDetails(details as PostDetailType);
+      setPostDetails((prevDetails) => {
+        return {
+          ...(details as PostDetailType),
+          _count: {
+            ...(details as PostDetailType)._count,
+            likes: prevDetails?._count.likes ?? (details as PostDetailType)._count.likes,
+            comments: (details as PostDetailType)._count.comments,
+          },
+          likes: prevDetails?.likes ?? (details as PostDetailType).likes,
+          
+        } as PostDetailType;
+      });
       setSelectedPost(details as PostType);
     }
     setIsFetchingDetails(false);
-  }, []);
-
+  }, [currentUserId, selectedPost]);
+  
   const handleOpenModal = (post: PostType) => {
     setSelectedPost(post);
     setShowAllComments(false);
@@ -114,7 +125,7 @@ export default function ExploreView({
   };
   
   const handleToggleComments = () => {
-    if ((postDetails as PostDetailType)?.comments?.length > 0) {
+    if ((postDetails as PostDetailType)?.comments?.length > 0 || (currentModalPost && currentModalPost._count.comments === 0)) {
       setShowAllComments((prev) => !prev);
     }
   };
@@ -127,45 +138,58 @@ export default function ExploreView({
       );
     }
     return true;
-    });
+  });
 
   const handleToggleLike = (postId: number) => {
     if (isPending) return;
     
-    startTransition(() => {
-      setPosts((prevPosts) =>
-        prevPosts.map((post) => {
-          if (post.id === postId) {
-            const isLiked = post.likes.some(
-              (l) => l.userId === currentUserId
-            );
-            const newLikes = isLiked
-              ? post.likes.filter((l) => l.userId !== currentUserId)
-              : [...post.likes, { userId: currentUserId }];
-
-            if (selectedPost && selectedPost.id === postId) {
-              setSelectedPost({
-                ...selectedPost,
-                likes: newLikes,
-                _count: {
-                  ...selectedPost._count,
-                  likes: newLikes.length,
-                },
-              });
-            }
-
-            return {
-              ...post,
-              likes: newLikes,
-              _count: {
-                ...post._count,
-                likes: newLikes.length,
-              },
-            };
-          }
-          return post;
-        })
+    const updateLikes = (post: PostType) => {
+      const isLiked = post.likes.some(
+        (l) => l.userId === currentUserId
       );
+      const newLikes = isLiked
+        ? post.likes.filter((l) => l.userId !== currentUserId)
+        : [...post.likes, { userId: currentUserId }];
+      const newLikesCount = newLikes.length;
+
+      return {
+        ...post,
+        likes: newLikes,
+        _count: {
+          ...post._count,
+          likes: newLikesCount,
+        },
+      };
+    };
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === postId) {
+          return updateLikes(post);
+        }
+        return post;
+      })
+    );
+
+    setSelectedPost((prevSelectedPost) => {
+      if (prevSelectedPost && prevSelectedPost.id === postId) {
+        return updateLikes(prevSelectedPost);
+      }
+      return prevSelectedPost;
+    });
+
+    setPostDetails((prevPostDetails) => {
+      if (prevPostDetails && prevPostDetails.id === postId) {
+        const updatedPost = updateLikes(prevPostDetails);
+        return {
+          ...updatedPost,
+          comments: prevPostDetails.comments, 
+        } as PostDetailType;
+      }
+      return prevPostDetails;
+    });
+
+    startTransition(() => {
       toggleLike(postId);
     });
   };
@@ -176,21 +200,22 @@ export default function ExploreView({
     const content = formData.get("commentContent") as string;
     if (!content.trim()) return;
 
+    const tempCommentId = Date.now();
+    const newComment: CommentType = {
+      id: tempCommentId,
+      content: content,
+      createdAt: new Date(),
+      userId: currentUserId,
+      postId: selectedPost.id,
+      user: {
+        id: currentUser.id,
+        username: currentUser.username,
+        avatar: currentUser.avatar,
+      },
+    };
+
     setPostDetails((prevDetails) => {
       if (!prevDetails) return null;
-      const newComment: CommentType = {
-        id: Date.now(),
-        content: content,
-        createdAt: new Date(),
-        userId: currentUserId,
-        postId: selectedPost.id,
-        user: {
-          id: currentUser.id,
-          username: currentUser.username,
-          avatar: currentUser.avatar,
-        },
-      };
-
       return {
         ...prevDetails,
         comments: [...prevDetails.comments, newComment],
@@ -211,11 +236,27 @@ export default function ExploreView({
         },
       };
     });
-
-    await addComment(selectedPost.id, content);
-    commentFormRef.current?.reset();
     
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === selectedPost.id) {
+          return {
+            ...post,
+            _count: {
+              ...post._count,
+              comments: post._count.comments + 1,
+            },
+          };
+        }
+        return post;
+      })
+    );
+
+    commentFormRef.current?.reset();
     setShowAllComments(true); 
+
+    const result = await addComment(selectedPost.id, content);
+    
     fetchPostDetails(selectedPost.id);
   };
 
