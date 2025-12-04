@@ -22,6 +22,7 @@ type BookmarkWithPost = {
   };
 };
 
+type BookmarkedPost = PostWithRelations;
 
 export default async function BookmarksPage() {
   const cookieStore = await cookies();
@@ -54,8 +55,9 @@ export default async function BookmarksPage() {
       },
     },
   }) as BookmarkWithPost[];
-  const bookmarkedPosts: PostWithRelations[] = bookmarks.map((b: BookmarkWithPost) => ({
+  const bookmarkedPosts: BookmarkedPost[] = bookmarks.map((b: BookmarkWithPost) => ({
     ...b.post,
+    bookmarks: [{ userId: currentUserId }], 
     author: b.post.author,
     likes: b.post.likes,
     comments: b.post.comments,

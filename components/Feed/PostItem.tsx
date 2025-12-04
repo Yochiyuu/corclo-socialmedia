@@ -11,11 +11,11 @@ import {
   Share2,
   Trash2,
   Bookmark,
-  X, // DIPERBAIKI: Import icon X
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useTransition } from "react";
-import { Button, Card, Dropdown, Form, Image, InputGroup, Alert } from "react-bootstrap"; // Tambahkan Alert
+import { Button, Card, Dropdown, Form, Image, InputGroup, Alert } from "react-bootstrap"; 
 
 const CustomToggle = React.forwardRef(({ children, onClick }: any, ref: any) => (
   <div
@@ -52,6 +52,7 @@ type PostProps = {
       user: { username: string };
       parentId?: number | null; 
     }[];
+    bookmarks: { userId: number }[];
   };
   currentUserId: number;
 };
@@ -64,10 +65,11 @@ export default function PostItem({ post, currentUserId }: PostProps) {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(
+    post.bookmarks.length > 0 
+  );
   const [replyingToId, setReplyingToId] = useState<number | null>(null);
   
-  // Function handler baru:
   const handleBookmark = async () => {
     const previousState = isBookmarked;
     setIsBookmarked(!isBookmarked);
@@ -109,10 +111,9 @@ export default function PostItem({ post, currentUserId }: PostProps) {
     e.preventDefault();
     if (!commentText.trim()) return;
 
-    // KOREKSI ERROR 1: Menghapus '/' dan memperbaiki await
     await addComment(post.id, commentText, replyingToId || undefined); 
     setCommentText("");
-    setReplyingToId(null); // Reset setelah submit
+    setReplyingToId(null); 
   };
 
   const handleDelete = () => {
@@ -255,7 +256,7 @@ export default function PostItem({ post, currentUserId }: PostProps) {
                         <small 
                            className="text-secondary ms-auto" 
                            style={{ cursor: 'pointer' }}
-                           onClick={() => setReplyingToId(comment.id)} // Atur ID yang dibalas
+                           onClick={() => setReplyingToId(comment.id)} 
                         >
                             Balas
                         </small>

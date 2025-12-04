@@ -69,6 +69,10 @@ export default async function HomePage() {
         include: { user: { select: { username: true } } },
         orderBy: { createdAt: "asc" },
       },
+    bookmarks: {
+        where: { userId: currentUserId }, 
+        select: { userId: true },
+    },
     },
   });
 
