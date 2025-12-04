@@ -71,3 +71,28 @@ a.text-primary:hover, .btn-link.text-primary:hover {
 .hover-underline:hover {
   text-decoration: underline !important;
 }
+
+/* --- AFFINITY ECHO --- */
+
+@keyframes pulse-glow {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    box-shadow: 0 0 0 rgba(124, 58, 237, 0);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.8);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    box-shadow: 0 0 0 rgba(124, 58, 237, 0);
+  }
+}
+
+/* Aura circle */
+.animate-pulse-slow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
