@@ -45,15 +45,17 @@ export async function registerUser(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // KODE REMOTE YANG DITAMBAHKAN TEMAN ANDA (Generate Avatar API)
+    const avatarUrl = `/api/avatar?name=${encodeURIComponent(name)}`; 
+    
     const newUser = await prisma.user.create({
       data: {
         name,
         username,
         email,
         password: hashedPassword,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-          name
-        )}&background=random`,
+        // MEMPERTAHANKAN PERUBAHAN AVATAR DARI REMOTE
+        avatar: avatarUrl, 
       },
     });
 
@@ -154,7 +156,7 @@ export async function createPost(formData: FormData) {
       authorId,
       mediaUrl,
       mediaType,
-      visibility: "PUBLIC",
+      visibility: "PUBLIC", // DITAMBAHKAN LOKAL
     },
   });
 
@@ -223,7 +225,7 @@ export async function toggleLike(postId: number) {
           postId,
         },
       });
-      await logEngagement("LIKE", postId); 
+      await logEngagement("LIKE", postId); // TAMBAHAN LOKAL
     }
 
     revalidatePath("/home");
@@ -232,7 +234,7 @@ export async function toggleLike(postId: number) {
   }
 }
 
-// --- BOOKMARKS ---
+// --- BOOKMARKS (TAMBAHAN LOKAL) ---
 
 export async function toggleBookmark(postId: number) {
   const cookieStore = await cookies();
@@ -270,6 +272,8 @@ export async function toggleBookmark(postId: number) {
   }
 }
 
+// --- ADD COMMENT (MODIFIKASI LOKAL untuk Threaded Comments) ---
+
 export async function addComment(postId: number, content: string, parentId?: number) {
   const cookieStore = await cookies();
   const userIdCookie = cookieStore.get("userId")?.value;
@@ -284,10 +288,10 @@ export async function addComment(postId: number, content: string, parentId?: num
         content,
         postId,
         userId,
-        parentId,
+        parentId, // FIELD BARU DARI LOKAL
       },
     });
-    await logEngagement("COMMENT", postId);
+    await logEngagement("COMMENT", postId); // TAMBAHAN LOKAL
     revalidatePath("/home");
   } catch (error) {
     console.error("Error adding comment:", error);
@@ -332,7 +336,7 @@ export async function toggleFollow(targetUserId: number) {
         },
       });
 
-      await logEngagement("FOLLOW" as EngagementType, undefined, targetUserId);
+      await logEngagement("FOLLOW" as EngagementType, undefined, targetUserId); // TAMBAHAN LOKAL
     }
 
     revalidatePath("/home");
@@ -369,6 +373,8 @@ export async function searchUsers(query: string) {
     return [];
   }
 }
+
+// --- UPDATE PROFILE (TAMBAHAN LOKAL) ---
 
 export async function updateProfile(formData: FormData) {
   const cookieStore = await cookies();
@@ -435,7 +441,7 @@ export async function updateProfile(formData: FormData) {
   }
 }
 
-// --- STORIES ---
+// --- STORIES (TAMBAHAN LOKAL) ---
 
 export async function createStory(formData: FormData) {
   const cookieStore = await cookies();
@@ -484,6 +490,9 @@ export async function createStory(formData: FormData) {
   revalidatePath("/home");
   redirect("/home");
 }
+
+// --- CHAT FUNCTIONS (DI BAWAH INI SEJAK getConversations HINGGA toggleMessageLike)
+// --- SEMUA FUNGSI INI HARUS DIPERTAHANKAN SEPERTI DI LOKAL.
 
 // 1. Ambil Daftar Chat
 export async function getConversations() {
@@ -646,7 +655,7 @@ export async function sendMessage(formData: FormData) {
   }).then(conv => conv?.participants.find(p => p.id !== parseInt(userId!)));
   
   if (targetUser) {
-    await logEngagement("DM_SEND" as EngagementType, undefined, targetUser.id);
+    await logEngagement("DM_SEND" as EngagementType, undefined, targetUser.id); // TAMBAHAN LOKAL
   }
 
   revalidatePath("/messages");
@@ -705,6 +714,8 @@ export async function toggleMessageLike(messageId: number) {
   revalidatePath("/messages");
 }
 
+// --- FUNGSI BARU CRITICAL: ENGAGEMENT & DASHBOARD & AFFINITY (TAMBAHAN LOKAL) ---
+
 export async function logEngagement(
   type: EngagementType,
   postId?: number,
@@ -727,8 +738,6 @@ export async function logEngagement(
     console.error(`Error logging ${type}:`, error);
   }
 }
-
-// --- FUNGSI UNTUK DASHBOARD OTONOMI ---
 
 export async function fetchFeedLog() {
   const cookieStore = await cookies();
@@ -774,8 +783,6 @@ export async function exportUserData(formData: FormData) {
 
   console.log("DATA EXPORT TRIGGERED:", userData?.username);
 }
-
-// --- AFFINITY ECHO FUNCTIONS ---
 
 const PING_LIMIT_PER_DAY = 3;
 
@@ -878,4 +885,31 @@ export async function sendAffinityPing(
     
     revalidatePath("/connect/echo"); 
     return { success: true, message: "Affinity Ping terkirim! Menunggu tanggapan." };
+}
+
+// FUNGSI UNTUK EXPLORE VIEW
+export async function getPostDetails(postId: number) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      include: {
+        author: { select: { id: true, username: true, avatar: true } },
+        likes: { select: { userId: true } },
+        comments: {
+          include: {
+            user: { select: { id: true, username: true, avatar: true } },
+          },
+          orderBy: { createdAt: "asc" },
+        },
+        _count: {
+          select: { likes: true, comments: true },
+        },
+      },
+    });
+    // KODE TAMBAHAN DARI REMOTE: Menghindari error Next.js saat serialization
+    return JSON.parse(JSON.stringify(post));
+  } catch (error) {
+    console.error("Error fetching post details:", error);
+    return null;
+  }
 }

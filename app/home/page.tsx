@@ -72,6 +72,20 @@ export default async function HomePage() {
     },
   });
 
+  const allPostsSerialized = allPosts.map((post) => ({
+    ...post,
+    createdAt: post.createdAt.toISOString(),
+    comments: post.comments.map((c) => ({
+      ...c,
+      createdAt: c.createdAt.toISOString(),
+    })),
+  })) as any;
+
+  const currentUserSerialized = {
+    ...currentUser,
+    createdAt: currentUser.createdAt.toISOString(),
+  } as any;
+
   const suggestions = await prisma.user.findMany({
     where: {
       id: { not: currentUserId },
@@ -90,8 +104,8 @@ export default async function HomePage() {
 
   return (
     <HomeView
-      currentUser={currentUser}
-      allPosts={allPosts}
+      currentUser={currentUserSerialized}
+      allPosts={allPostsSerialized}
       currentUserId={currentUserId}
       suggestions={suggestions}
       storySection={
