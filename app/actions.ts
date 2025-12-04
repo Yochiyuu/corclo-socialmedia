@@ -40,6 +40,7 @@ export async function registerUser(
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const avatarUrl = `/api/avatar?name=${encodeURIComponent(name)}`;
 
     const newUser = await prisma.user.create({
       data: {
@@ -47,9 +48,7 @@ export async function registerUser(
         username,
         email,
         password: hashedPassword,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(
-          name
-        )}&background=random`,
+        avatar: avatarUrl,
       },
     });
 
@@ -115,6 +114,17 @@ export async function createPost(formData: FormData) {
   }
 
   const authorId = parseInt(userIdCookie);
+
+  // --- VALIDASI USER (Pencegahan Error Database Reset) ---
+  const userExists = await prisma.user.findUnique({
+    where: { id: authorId },
+  });
+
+  if (!userExists) {
+    cookieStore.delete("userId");
+    redirect("/login");
+  }
+  // -----------------------------------------------------
 
   let mediaUrl = null;
   let mediaType: "IMAGE" | "VIDEO" | null = null;
