@@ -45,9 +45,9 @@ export async function registerUser(
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // KODE REMOTE YANG DITAMBAHKAN TEMAN ANDA (Generate Avatar API)
-    const avatarUrl = `/api/avatar?name=${encodeURIComponent(name)}`; 
-    
+    // KODE REMOTE (Generate Avatar API)
+    const avatarUrl = `/api/avatar?name=${encodeURIComponent(name)}`;
+
     const newUser = await prisma.user.create({
       data: {
         name,
@@ -55,7 +55,7 @@ export async function registerUser(
         email,
         password: hashedPassword,
         // MEMPERTAHANKAN PERUBAHAN AVATAR DARI REMOTE
-        avatar: avatarUrl, 
+        avatar: avatarUrl,
       },
     });
 
@@ -653,7 +653,7 @@ export async function sendMessage(formData: FormData) {
     where: { id: conversationId },
     include: { participants: true },
   }).then(conv => conv?.participants.find(p => p.id !== parseInt(userId!)));
-  
+
   if (targetUser) {
     await logEngagement("DM_SEND" as EngagementType, undefined, targetUser.id); // TAMBAHAN LOKAL
   }
@@ -726,7 +726,7 @@ export async function logEngagement(
   if (!userIdCookie) return;
 
   try {
-    await (prisma as any).userEngagementLog.create({ 
+    await (prisma as any).userEngagementLog.create({
       data: {
         actorId: parseInt(userIdCookie),
         type: type,
@@ -762,9 +762,9 @@ export async function fetchFeedLog() {
   });
 }
 
-export async function exportUserData(formData: FormData) { 
+export async function exportUserData(formData: FormData) {
   const cookieStore = await cookies();
-  const userIdCookie = (await cookieStore).get("userId")?.value; 
+  const userIdCookie = (await cookieStore).get("userId")?.value;
 
   if (!userIdCookie) return;
   const currentUserId = parseInt(userIdCookie);
@@ -790,101 +790,102 @@ const PING_LIMIT_PER_DAY = 3;
  * Menghitung skor afinitas berdasarkan Mutuals
  */
 async function calculateAffinityScore(currentUserId: number, targetUserId: number): Promise<{ score: number, mutualFollowers: number }> {
-    // Mencari mutual followers: user A follows B DAN B follows A.
-    // Kita harus mencari anggota yang di-follow oleh A, yang juga di-follow oleh B.
-    
-    // 1. Dapatkan daftar pengguna yang di-follow oleh target (B)
-    const targetFollowing = await prisma.follows.findMany({ 
-        where: { followerId: targetUserId }, 
-        select: { followingId: true } 
-    });
-    const targetFollowingIds = targetFollowing.map(f => f.followingId);
+  // Mencari mutual followers: user A follows B DAN B follows A.
+  // Kita harus mencari anggota yang di-follow oleh A, yang juga di-follow oleh B.
 
-    // 2. Hitung berapa banyak ID di atas yang juga di-follow oleh current user (A)
-    const mutualFollowsCount = await prisma.follows.count({
-        where: {
-            followerId: currentUserId,
-            followingId: {
-                in: targetFollowingIds // Filter dengan ID yang di-follow oleh Target
-            }
-        }
-    });
+  // 1. Dapatkan daftar pengguna yang di-follow oleh target (B)
+  const targetFollowing = await prisma.follows.findMany({
+    where: { followerId: targetUserId },
+    select: { followingId: true }
+  });
 
-    // --- Dummy Affinity Logic ---
-    let score = 0.5;
-    if (mutualFollowsCount > 2) {
-        score = 0.8;
-    } else if (mutualFollowsCount > 0) {
-        score = 0.65;
+  const targetFollowingIds = targetFollowing.map(f => f.followingId);
+
+  // 2. Hitung berapa banyak ID di atas yang juga di-follow oleh current user (A)
+  const mutualFollowsCount = await prisma.follows.count({
+    where: {
+      followerId: currentUserId,
+      followingId: {
+        in: targetFollowingIds // Filter dengan ID yang di-follow oleh Target
+      }
     }
-    
-    return { score, mutualFollowers: mutualFollowsCount }; 
+  });
+
+  // --- Dummy Affinity Logic ---
+  let score = 0.5;
+  if (mutualFollowsCount > 2) {
+    score = 0.8;
+  } else if (mutualFollowsCount > 0) {
+    score = 0.65;
+  }
+
+  return { score, mutualFollowers: mutualFollowsCount };
 }
 
 
 export async function sendAffinityPing(
-    // Argumen 1: prevState (required oleh useFormState)
-    prevState: AffinityFormState, 
-    // Argumen 2: formData
-    formData: FormData 
+  // Argumen 1: prevState (required oleh useFormState)
+  prevState: AffinityFormState,
+  // Argumen 2: formData
+  formData: FormData
 ): Promise<AffinityFormState> { // Mengembalikan Promise<State>
-    const cookieStore = await cookies();
-    const userIdCookie = cookieStore.get("userId")?.value;
-    if (!userIdCookie) return prevState;
-    const currentUserId = parseInt(userIdCookie);
+  const cookieStore = await cookies();
+  const userIdCookie = cookieStore.get("userId")?.value;
+  if (!userIdCookie) return prevState;
+  const currentUserId = parseInt(userIdCookie);
 
-    // Ambil targetUserId dari FormData
-    const targetUserIdStr = formData.get("targetUserId") as string;
-    if (!targetUserIdStr) return { success: false, message: "Target ID hilang." };
+  // Ambil targetUserId dari FormData
+  const targetUserIdStr = formData.get("targetUserId") as string;
+  if (!targetUserIdStr) return { success: false, message: "Target ID hilang." };
 
-    const targetUserId = parseInt(targetUserIdStr);
+  const targetUserId = parseInt(targetUserIdStr);
 
-    if (currentUserId === targetUserId) {
-        return { success: false, message: "Tidak bisa mengirim Ping ke diri sendiri." };
-    }
+  if (currentUserId === targetUserId) {
+    return { success: false, message: "Tidak bisa mengirim Ping ke diri sendiri." };
+  }
 
-    const PING_LIMIT_PER_DAY = 3; // Pindahkan konstanta ke sini atau scope global
+  const PING_LIMIT_PER_DAY = 3;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    // Cek batas Ping harian
-    const sentToday = await (prisma as any).affinityPing.count({
-        where: {
-            senderId: currentUserId,
-            createdAt: { gte: today },
-        },
-    });
+  // Cek batas Ping harian
+  const sentToday = await (prisma as any).affinityPing.count({
+    where: {
+      senderId: currentUserId,
+      createdAt: { gte: today },
+    },
+  });
 
-    if (sentToday >= PING_LIMIT_PER_DAY) {
-        return { success: false, message: `Batas Ping harian (${PING_LIMIT_PER_DAY}x) telah tercapai.` };
-    }
+  if (sentToday >= PING_LIMIT_PER_DAY) {
+    return { success: false, message: `Batas Ping harian (${PING_LIMIT_PER_DAY}x) telah tercapai.` };
+  }
 
-    // Cek apakah Ping sudah pernah terkirim
-    const existingPing = await (prisma as any).affinityPing.findUnique({
-        where: { senderId_receiverId: { senderId: currentUserId, receiverId: targetUserId } }
-    });
+  // Cek apakah Ping sudah pernah terkirim
+  const existingPing = await (prisma as any).affinityPing.findUnique({
+    where: { senderId_receiverId: { senderId: currentUserId, receiverId: targetUserId } }
+  });
 
-    if (existingPing) {
-        return { success: false, message: "Anda sudah pernah mengirim Ping ke pengguna ini." };
-    }
+  if (existingPing) {
+    return { success: false, message: "Anda sudah pernah mengirim Ping ke pengguna ini." };
+  }
 
-    // Asumsi calculateAffinityScore mengembalikan { score: number }
-    const { score } = await (calculateAffinityScore as any)(currentUserId, targetUserId);
+  // Asumsi calculateAffinityScore mengembalikan { score: number }
+  const { score } = await (calculateAffinityScore as any)(currentUserId, targetUserId);
 
-    await (prisma as any).affinityPing.create({
-        data: {
-            senderId: currentUserId,
-            receiverId: targetUserId,
-            status: "PENDING",
-            score: score,
-        },
-    });
-    
-    await logEngagement("PING_SEND" as EngagementType, undefined, targetUserId);
-    
-    revalidatePath("/connect/echo"); 
-    return { success: true, message: "Affinity Ping terkirim! Menunggu tanggapan." };
+  await (prisma as any).affinityPing.create({
+    data: {
+      senderId: currentUserId,
+      receiverId: targetUserId,
+      status: "PENDING",
+      score: score,
+    },
+  });
+
+  await logEngagement("PING_SEND" as EngagementType, undefined, targetUserId);
+
+  revalidatePath("/connect/echo");
+  return { success: true, message: "Affinity Ping terkirim! Menunggu tanggapan." };
 }
 
 // FUNGSI UNTUK EXPLORE VIEW
@@ -906,10 +907,31 @@ export async function getPostDetails(postId: number) {
         },
       },
     });
-    // KODE TAMBAHAN DARI REMOTE: Menghindari error Next.js saat serialization
     return JSON.parse(JSON.stringify(post));
   } catch (error) {
     console.error("Error fetching post details:", error);
     return null;
   }
+}
+
+export async function acceptAffinityPing(pingId: number) {
+  const cookieStore = await cookies();
+  const userIdCookie = cookieStore.get("userId")?.value;
+  if (!userIdCookie) return;
+  const currentUserId = parseInt(userIdCookie);
+
+  const ping = await (prisma as any).affinityPing.findUnique({
+    where: { id: pingId },
+  });
+
+  if (!ping || ping.receiverId !== currentUserId) {
+    throw new Error("Unauthorized");
+  }
+
+  await (prisma as any).affinityPing.update({
+    where: { id: pingId },
+    data: { status: "ACCEPTED" },
+  });
+
+  revalidatePath("/connect/echo");
 }

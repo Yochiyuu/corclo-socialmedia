@@ -4,6 +4,7 @@ import { Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Container, Row, Col, Card, Image, Badge } from "react-bootstrap";
 import AffinityPingForm from "./AffinityPingForm";
+import AcceptPingButton from "./AcceptPingButton";
 
 // --- KONFIGURASI ECHO ---
 const VISUALIZER_CONFIG = {
@@ -25,12 +26,26 @@ type AffinitySuggestion = {
     mutualFollowers: number;
 };
 
+type ReceivedPing = {
+    id: number;
+    createdAt: Date;
+    score: number;
+    sender: {
+        id: number;
+        username: string;
+        name: string;
+        avatar: string | null;
+    };
+};
+
 export default function AffinityEchoView({
     currentUser,
-    affinitySuggestions
+    affinitySuggestions,
+    receivedPings = []
 }: {
     currentUser: CurrentUser;
     affinitySuggestions: AffinitySuggestion[];
+    receivedPings?: ReceivedPing[];
 }) {
 
     const getGlowColor = (score: number) => {
@@ -77,12 +92,53 @@ export default function AffinityEchoView({
                         </div>
                     </div>
 
+                    {/* --- RECEIVED PINGS --- */}
+                    {receivedPings.length > 0 && (
+                        <div className="mb-5 animate-fade-in">
+                            <h5 className="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                                <span className="p-1 rounded bg-primary bg-opacity-25"><Zap size={16} className="text-primary" /></span>
+                                Pings Masuk
+                                <Badge bg="danger" pill className="ms-2">{receivedPings.length}</Badge>
+                            </h5>
+                            <Row className="g-3">
+                                {receivedPings.map(ping => (
+                                    <Col xs={12} md={6} key={ping.id}>
+                                        <div className="glass-card p-3 rounded-4 d-flex align-items-center gap-3 hover-scale transition-all">
+                                            <Link href={`/profile/${ping.sender.username}`}>
+                                                <Image
+                                                    src={ping.sender.avatar || "/images/default-avatar.png"}
+                                                    roundedCircle
+                                                    width={60}
+                                                    height={60}
+                                                    className="border border-2 border-primary cursor-pointer"
+                                                    style={{ objectFit: 'cover' }}
+                                                />
+                                            </Link>
+                                            <div className="flex-grow-1">
+                                                <Link href={`/profile/${ping.sender.username}`} className="text-decoration-none">
+                                                    <h6 className="mb-0 fw-bold text-white hover-underline">{ping.sender.name}</h6>
+                                                </Link>
+                                                <small className="text-secondary d-block">@{ping.sender.username}</small>
+                                                <small className="text-success fw-bold" style={{ fontSize: '0.75rem' }}>
+                                                    {(ping.score * 100).toFixed(0)}% Affinity Match
+                                                </small>
+                                            </div>
+                                            <div className="ms-auto d-flex gap-2">
+                                                <AcceptPingButton pingId={ping.id} />
+                                            </div>
+                                        </div>
+                                    </Col>
+                                ))}
+                            </Row>
+                        </div>
+                    )}
+
                     <Row className="g-4">
                         {affinitySuggestions.map((user) => {
                             const glowColor = getGlowColor(user.affinityScore);
 
                             return (
-                                <Col md={6} lg={4} key={user.id}>
+                                <Col xs={12} md={6} lg={4} key={user.id}>
                                     <Card
                                         className="h-100 glass-card text-center border-0 overflow-hidden hover-lift"
                                         style={{
@@ -123,14 +179,16 @@ export default function AffinityEchoView({
                                                 }}
                                             >
                                                 <div className="position-relative d-inline-block">
-                                                    <Image
-                                                        src={user.avatar || "/images/default-avatar.png"}
-                                                        roundedCircle
-                                                        width={VISUALIZER_CONFIG.AVATAR_SIZE}
-                                                        height={VISUALIZER_CONFIG.AVATAR_SIZE}
-                                                        className="bg-dark mb-2 shadow-lg"
-                                                        style={{ objectFit: "cover", border: `3px solid ${user.affinityScore > 0.7 ? '#7c3aed' : '#10b981'}` }}
-                                                    />
+                                                    <Link href={`/profile/${user.username}`}>
+                                                        <Image
+                                                            src={user.avatar || "/images/default-avatar.png"}
+                                                            roundedCircle
+                                                            width={VISUALIZER_CONFIG.AVATAR_SIZE}
+                                                            height={VISUALIZER_CONFIG.AVATAR_SIZE}
+                                                            className="bg-dark mb-2 shadow-lg cursor-pointer hover-scale"
+                                                            style={{ objectFit: "cover", border: `3px solid ${user.affinityScore > 0.7 ? '#7c3aed' : '#10b981'}` }}
+                                                        />
+                                                    </Link>
                                                     <Badge
                                                         bg="dark"
                                                         className="position-absolute bottom-0 start-50 translate-middle-x border border-secondary border-opacity-50 text-white rounded-pill px-2 py-1 small shadow-sm"
